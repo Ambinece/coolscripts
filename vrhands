@@ -1,0 +1,20 @@
+local UIS = game:GetService("UserInputService")
+
+local function deletePart()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local part = character:FindFirstChild("Please stop")
+
+    while part do
+        part:Destroy()
+        part = character:FindFirstChild("Please stop")
+        wait(0.1) -- Adjust the delay as needed
+    end
+end
+
+-- Bind the "L" key to start the delete loop
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.L then
+        deletePart()
+    end
+end)

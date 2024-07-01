@@ -8,7 +8,7 @@ local function deletePart()
     while part do
         part:Destroy()
         part = character:FindFirstChild("Please stop")
-        wait(0.1) -- Adjust the delay as needed
+        wait() -- Adjust the delay as needed
     end
 end
 

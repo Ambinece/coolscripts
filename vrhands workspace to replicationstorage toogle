@@ -1,0 +1,25 @@
+local UIS = game:GetService("UserInputService")
+
+local toggleState = false
+
+local function toggleLocalObjects()
+    local localObjects = game:GetService("ReplicatedStorage"):FindFirstChild("LocalObjects") or game.Workspace:FindFirstChild("LocalObjects")
+
+    if localObjects then
+        if toggleState then
+            localObjects.Parent = game.ReplicatedStorage
+        else
+            localObjects.Parent = game.Workspace
+        end
+        toggleState = not toggleState
+    else
+        warn("LocalObjects not found in ReplicatedStorage or Workspace.")
+    end
+end
+
+-- Bind the "P" key to toggle the LocalObjects
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.P then
+        toggleLocalObjects()
+    end
+end)

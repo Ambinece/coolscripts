@@ -3,7 +3,7 @@ local UIS = game:GetService("UserInputService")
 local toggleState = false
 
 local function toggleProps()
-    local props = game:GetService("ReplicatedStorage"):FindFirstChild("props") or game.Workspace:FindFirstChild("props")
+    local props = game:GetService("ReplicatedStorage"):FindFirstChild("Props") or game.Workspace:FindFirstChild("Props")
 
     if props then
         if toggleState then

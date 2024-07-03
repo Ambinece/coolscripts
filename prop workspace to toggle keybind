@@ -1,0 +1,25 @@
+local UIS = game:GetService("UserInputService")
+
+local toggleState = false
+
+local function toggleProps()
+    local props = game:GetService("ReplicatedStorage"):FindFirstChild("props") or game.Workspace:FindFirstChild("props")
+
+    if props then
+        if toggleState then
+            props.Parent = game.ReplicatedStorage
+        else
+            props.Parent = game.Workspace
+        end
+        toggleState = not toggleState
+    else
+        warn("props not found in ReplicatedStorage or Workspace.")
+    end
+end
+
+-- Bind the "M" key to toggle the props
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.M then
+        toggleProps()
+    end
+end)

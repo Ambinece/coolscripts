@@ -7,10 +7,12 @@ local spamCoroutine
 local function spamRob()
     while isSpamming do
         local robRemote = ReplicatedStorage:WaitForChild("rob")
+        local speed = game.Players.LocalPlayer.Character.Humanoid.Walkspeed
         if robRemote then
             robRemote:FireServer()
+            speed = 32
         end
-        wait(0.1) -- Adjust the delay as needed
+        wait() -- Adjust the delay as needed
     end
 end
 

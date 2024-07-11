@@ -11,8 +11,7 @@ local function spamRob()
             robRemote:FireServer()
             humanoid.WalkSpeed = 32
         end
-        wait() -- Adjust the delay as needed
-    end
+        task.wait(0.1)
 end
 
 local function toggleSpam()
@@ -21,12 +20,12 @@ local function toggleSpam()
         spamCoroutine = coroutine.create(spamRob)
         coroutine.resume(spamCoroutine)
     else
-        -- Set the WalkSpeed back to the default value (assuming it's 16)
+        -- Set the WalkSpeed back to the default value
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:FindFirstChild("Humanoid")
         if humanoid then
-            humanoid.WalkSpeed = 20.5
+            humanoid.WalkSpeed = 20
         end
     end
 end

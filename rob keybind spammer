@@ -5,13 +5,25 @@ local isSpamming = false
 local spamCoroutine
 
 local function spamRob()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChild("Humanoid")
+
+    if humanoid then
+        humanoid.WalkSpeed = 36
+    end
+
     while isSpamming do
-        local humanoid = game.Players.LocalPlayer.Character:FindFirstChild("Humanoid")
-        if robRemote and humanoid then
+        local robRemote = ReplicatedStorage:WaitForChild("rob")
+        if robRemote then
             robRemote:FireServer()
-            humanoid.WalkSpeed = 32
         end
-        task.wait(0.1)
+        wait(0.1) -- Adjust the delay as needed
+    end
+
+    if humanoid then
+        humanoid.WalkSpeed = 20 -- Resetting the speed to the default value
+    end
 end
 
 local function toggleSpam()
@@ -20,13 +32,7 @@ local function toggleSpam()
         spamCoroutine = coroutine.create(spamRob)
         coroutine.resume(spamCoroutine)
     else
-        -- Set the WalkSpeed back to the default value
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid.WalkSpeed = 20
-        end
+        isSpamming = false
     end
 end
 
@@ -36,3 +42,4 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
         toggleSpam()
     end
 end)
+

@@ -1,5 +1,18 @@
 local UIS = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CoreGui = game:GetService("CoreGui")
+local Screen = Instance.new("ScreenGui")
+local Gui = Instance.new("Frame")
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+
+Screen.Parent = CoreGui
+
+Gui.Parent = Screen
+Gui.Size = UDim2.new(0, 50, 0, 100)
+Gui.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
+Gui.Position = UDim2.new(0.5, -150, 0.5, -100)
 
 local isSpamming = false
 local spamCoroutine
@@ -17,12 +30,14 @@ end
 local function toggleSpam()
     isSpamming = not isSpamming
     if isSpamming then
+        Humanoid.WalkSpeed = 23
+        Gui.BackgroundColor3 = Color3.new(204/255, 255/255, 204/255)
         spamCoroutine = coroutine.create(spamRob)
         coroutine.resume(spamCoroutine)
     else
-        if spamCoroutine then
-            coroutine.close(spamCoroutine)
-        end
+        Humanoid.WalkSpeed = 20
+        Gui.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
+        spamCoroutine = nil -- Set to nil to indicate coroutine is stopped
     end
 end
 

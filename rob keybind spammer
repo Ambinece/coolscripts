@@ -23,23 +23,36 @@ local function spamRob()
         if robRemote then
             robRemote:FireServer()
         end
-        wait(0.1) -- Adjust the delay as needed
+        task.wait(0.1) -- Adjust the delay as needed
     end
 end
 
 local function toggleSpam()
     isSpamming = not isSpamming
     if isSpamming then
-        Humanoid.WalkSpeed = 23
         Gui.BackgroundColor3 = Color3.new(204/255, 255/255, 204/255)
         spamCoroutine = coroutine.create(spamRob)
         coroutine.resume(spamCoroutine)
     else
-        Humanoid.WalkSpeed = 20
         Gui.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
         spamCoroutine = nil -- Set to nil to indicate coroutine is stopped
     end
 end
+
+-- Function to continuously check the RobTransformed status
+local function checkRobTransformed()
+    while true do
+        if Character:FindFirstChild("RobTransformed") then
+            Humanoid.WalkSpeed = 23
+        else
+            Humanoid.WalkSpeed = 16 -- Reset to default WalkSpeed if needed
+        end
+        task.wait(0.5)
+    end
+end
+
+-- Start the RobTransformed check coroutine
+coroutine.wrap(checkRobTransformed)()
 
 -- Bind the "R" key to toggle the spam function
 UIS.InputBegan:Connect(function(input, gameProcessed)

@@ -23,7 +23,7 @@ local function spamRob()
         if robRemote then
             robRemote:FireServer()
         end
-        task.wait(0.1) -- Adjust the delay as needed
+        task.wait(0.1)
     end
 end
 
@@ -39,7 +39,6 @@ local function toggleSpam()
     end
 end
 
--- Function to continuously check the RobTransformed status
 local function checkRobTransformed()
     while true do
         if Character:FindFirstChild("RobTransformed") then
@@ -51,12 +50,12 @@ local function checkRobTransformed()
     end
 end
 
--- Start the RobTransformed check coroutine
 coroutine.wrap(checkRobTransformed)()
 
--- Bind the "R" key to toggle the spam function
 UIS.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.R then
         toggleSpam()
     end
 end)
+
+-- for some reason after you die you cannot return to being quick again if you know a fix please tell me

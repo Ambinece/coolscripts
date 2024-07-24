@@ -1,61 +1,53 @@
 local UIS = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local CoreGui = game:GetService("CoreGui")
+local CoreGui = game.CoreGui
 local Screen = Instance.new("ScreenGui")
-local Gui = Instance.new("Frame")
-local Player = game.Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
+local Button = Instance.new("TextButton")
 
 Screen.Parent = CoreGui
 
-Gui.Parent = Screen
-Gui.Size = UDim2.new(0, 50, 0, 100)
-Gui.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
-Gui.Position = UDim2.new(0.5, -150, 0.5, -100)
+Button.Parent = Screen
+Button.Size = UDim2.new(0, 100, 0, 50)
+Button.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
+Button.Position = UDim2.new(0.5, -50, 0.5, -25)
+Button.Text = "Spam: OFF"
+Button.TextScaled = true
 
 local isSpamming = false
 local spamCoroutine
 
 local function spamRob()
     while isSpamming do
-        local robRemote = ReplicatedStorage:WaitForChild("rob")
+        local robRemote = ReplicatedStorage:FindFirstChild("rob")
         if robRemote then
             robRemote:FireServer()
+        else
+            warn("Remote 'rob' not found/You do not have rob equipped")
         end
-        task.wait(0.1)
-    end
+        wait(0.1)
 end
 
 local function toggleSpam()
     isSpamming = not isSpamming
     if isSpamming then
-        Gui.BackgroundColor3 = Color3.new(204/255, 255/255, 204/255)
+        Button.BackgroundColor3 = Color3.new(204/255, 255/255, 204/255)
+        Button.Text = "Spam: ON"
         spamCoroutine = coroutine.create(spamRob)
         coroutine.resume(spamCoroutine)
     else
-        Gui.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
+        Button.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
+        Button.Text = "Spam: OFF"
         spamCoroutine = nil -- Set to nil to indicate coroutine is stopped
     end
 end
 
-local function checkRobTransformed()
-    while true do
-        if Character:FindFirstChild("RobTransformed") then
-            Humanoid.WalkSpeed = 23
-        else
-            Humanoid.WalkSpeed = 16 -- Reset to default WalkSpeed if needed
-        end
-        task.wait(0.5)
-    end
-end
-
-coroutine.wrap(checkRobTransformed)()
-
+-- Bind the "R" key and button click to toggle the spam function
 UIS.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.R then
         toggleSpam()
     end
 end)
+
+Button.MouseButton1Click:Connect(toggleSpam)
 
 -- for some reason after you die you cannot return to being quick again if you know a fix please tell me

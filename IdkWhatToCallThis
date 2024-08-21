@@ -15,36 +15,37 @@ hitbox.Parent = Character
 hitbox.CastShadow = false
 hitbox.Name = "Hitbox"
 
-local function attackTargetsInHitbox()
-    local livingFolder = game.Workspace:FindFirstChild("Living")
-    if livingFolder then
-        for _, group in pairs(livingFolder:GetChildren()) do
-            if group ~= Character then  -- Exclude the local player's character
-                local targetHRP = group:FindFirstChild("Torso")
-                if targetHRP then
-                    local args = {
-                        [1] = targetHRP.CFrame,
-                        [2] = 150,
-                        [3] = 5,
-                        [4] = 5,
-                        [5] = 35,
-                        [6] = ReplicatedStorage.gaster.Saw,
-                        [7] = 410625063,
-                        [8] = 1,
-                        [9] = 2,
-                        [10] = targetHRP,
-                        [11] = 2
-                    }
+local debounce = {}
 
-                    local remote = ReplicatedStorage:WaitForChild("newremotes"):FindFirstChild("CreateProjectile")
-                    if remote then
-                        remote:FireServer(unpack(args))
-                    end
-                end
+local function attackPlayer(player)
+    if not debounce[player] then
+        debounce[player] = true  -- Set debounce
+
+        local targetHRP = player.Character:FindFirstChild("HumanoidRootPart")
+        if targetHRP then
+            local args = {
+                [1] = targetHRP.CFrame,
+                [2] = 150,
+                [3] = 5,
+                [4] = 5,
+                [5] = 35,
+                [6] = ReplicatedStorage.gaster.Saw,
+                [7] = 410625063,
+                [8] = 1,
+                [9] = 2,
+                [10] = targetHRP,
+                [11] = 2
+            }
+            
+            local remote = ReplicatedStorage:WaitForChild("newremotes"):FindFirstChild("CreateProjectile")
+            if remote then
+                remote:FireServer(unpack(args))
             end
         end
-    else
-        warn("Living folder not found in workspace.")
+        
+        task.delay(0.5, function()
+            debounce[player] = nil
+        end)
     end
 end
 
@@ -52,12 +53,12 @@ local function updateHitboxPosition()
     hitbox.CFrame = HumanoidRootPart.CFrame
 end
 
-local function checkAndAttack()
-    while true do
-        updateHitboxPosition()
-        attackTargetsInHitbox()
-        wait()  -- Continuously loop without a delay
+hitbox.Touched:Connect(function(hit)
+    local character = hit.Parent
+    local player = Players:GetPlayerFromCharacter(character)
+    if player and player ~= LocalPlayer then
+        attackPlayer(player)
     end
-end
+end)
 
-RunService.Heartbeat:Connect(checkAndAttack)
+RunService.Heartbeat:Connect(updateHitboxPosition)

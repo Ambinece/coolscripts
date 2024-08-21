@@ -10,7 +10,7 @@ local hitbox = Instance.new("Part")
 hitbox.Size = Vector3.new(25, 75, 25)
 hitbox.Anchored = true
 hitbox.CanCollide = false
-hitbox.Transparency = 0.5
+hitbox.Transparency = 1
 hitbox.Parent = Character
 hitbox.CastShadow = false
 hitbox.Name = "Hitbox"
@@ -20,7 +20,7 @@ local function attackTargetsInHitbox()
     if livingFolder then
         for _, group in pairs(livingFolder:GetChildren()) do
             if group ~= Character then  -- Exclude the local player's character
-                local targetHRP = group:FindFirstChild("HumanoidRootPart")
+                local targetHRP = group:FindFirstChild("Torso")
                 if targetHRP then
                     local args = {
                         [1] = targetHRP.CFrame,

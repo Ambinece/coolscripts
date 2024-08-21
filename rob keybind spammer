@@ -23,11 +23,10 @@ local function spamRob()
         local robRemote = ReplicatedStorage:FindFirstChild("rob")
         if robRemote then
             robRemote:FireServer()
-            LocalPlayer.Character.Humanoid.WalkSpeed = 35
         else
             warn("Remote 'rob' not found/You do not have rob equipped")
         end
-        wait(0.1)
+        wait()
     end
 end
 
@@ -36,7 +35,7 @@ local function toggleSpam()
     if isSpamming then
         Button.BackgroundColor3 = Color3.new(204/255, 255/255, 204/255)
         Button.Text = "Spam: ON"
-        LocalPlayer.Character.Humanoid.WalkSpeed = 35
+        LocalPlayer.Character.Humanoid.WalkSpeed = 45
         spamCoroutine = coroutine.create(spamRob)
         coroutine.resume(spamCoroutine)
     else

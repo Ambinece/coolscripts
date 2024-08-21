@@ -25,7 +25,7 @@ local function spamRob()
         if robRemote then
             robRemote:FireServer()
         else
-            warn("Remote 'rob' not found/You do not have rob equipped")
+            warn("Remote 'rob' not found/You don't have rob equipped")
         end
         wait(0.1)
     end
@@ -41,11 +41,10 @@ local function toggleSpam()
     else
         Button.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
         Button.Text = "Spam: OFF"
-        spamCoroutine = nil -- Set to nil to indicate coroutine is stopped
+        spamCoroutine = nil
     end
 end
 
--- Bind the "R" key and button click to toggle the spam function
 UIS.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.R then
         toggleSpam()
@@ -55,17 +54,23 @@ end)
 Button.MouseButton1Click:Connect(toggleSpam)
 
 local function setupRespawnHandling()
-    -- Reset isSpamming and other variables upon respawn
     isSpamming = false
     if spamCoroutine then
         spamCoroutine = nil
     end
     Button.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
     Button.Text = "Spam: OFF"
+
+    local character = Player.Character or Player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.WalkSpeed = 35
+    end
 end
 
--- Handle player respawn
+
+
 Player.CharacterAdded:Connect(setupRespawnHandling)
-setupRespawnHandling() -- Call initially in case the player is already alive
+setupRespawnHandling()
 
 -- hopefully i was able to get a fix out

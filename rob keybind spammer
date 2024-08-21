@@ -41,12 +41,11 @@ local function toggleSpam()
     else
         Button.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
         Button.Text = "Spam: OFF"
-        LocalPlayer.Character.Humanoid.WalkSpeed = 20 
+        LocalPlayer.Character.Humanoid.WalkSpeed = 20
         isSpamming = false
     end
 end
 
--- Bind the "R" key and button click to toggle the spam function
 UIS.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.R then
         toggleSpam()
@@ -55,4 +54,4 @@ end)
 
 Button.MouseButton1Click:Connect(toggleSpam)
 
--- I FUCKING FIXED IT
+-- :>

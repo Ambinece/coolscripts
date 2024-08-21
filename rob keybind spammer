@@ -35,7 +35,7 @@ local function toggleSpam()
     if isSpamming then
         Button.BackgroundColor3 = Color3.new(204/255, 255/255, 204/255)
         Button.Text = "Spam: ON"
-        LocalPlayer.Character.Humanoid.WalkSpeed = 45
+        LocalPlayer.Character.Humanoid.WalkSpeed = 46
         spamCoroutine = coroutine.create(spamRob)
         coroutine.resume(spamCoroutine)
     else

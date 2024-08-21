@@ -23,6 +23,7 @@ local function spamRob()
         local robRemote = ReplicatedStorage:FindFirstChild("rob")
         if robRemote then
             robRemote:FireServer()
+            LocalPlayer.Character.Humanoid.WalkSpeed = 35
         else
             warn("Remote 'rob' not found/You do not have rob equipped")
         end

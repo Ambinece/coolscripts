@@ -1,6 +1,9 @@
 local UIS = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CoreGui = game.CoreGui
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+
 local Screen = Instance.new("ScreenGui")
 local Button = Instance.new("TextButton")
 
@@ -25,6 +28,7 @@ local function spamRob()
             warn("Remote 'rob' not found/You do not have rob equipped")
         end
         wait(0.1)
+    end
 end
 
 local function toggleSpam()
@@ -50,4 +54,18 @@ end)
 
 Button.MouseButton1Click:Connect(toggleSpam)
 
--- for some reason after you die you cannot return to being quick again if you know a fix please tell me
+local function setupRespawnHandling()
+    -- Reset isSpamming and other variables upon respawn
+    isSpamming = false
+    if spamCoroutine then
+        spamCoroutine = nil
+    end
+    Button.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
+    Button.Text = "Spam: OFF"
+end
+
+-- Handle player respawn
+Player.CharacterAdded:Connect(setupRespawnHandling)
+setupRespawnHandling() -- Call initially in case the player is already alive
+
+-- hopefully i was able to get a fix out

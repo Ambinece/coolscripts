@@ -1,11 +1,10 @@
 local UIS = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CoreGui = game.CoreGui
-local Players = game:GetService("Players")
-local Player = Players.LocalPlayer
-
 local Screen = Instance.new("ScreenGui")
 local Button = Instance.new("TextButton")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
 Screen.Parent = CoreGui
 
@@ -25,7 +24,7 @@ local function spamRob()
         if robRemote then
             robRemote:FireServer()
         else
-            warn("Remote 'rob' not found/You don't have rob equipped")
+            warn("Remote 'rob' not found/You do not have rob equipped")
         end
         wait(0.1)
     end
@@ -36,11 +35,13 @@ local function toggleSpam()
     if isSpamming then
         Button.BackgroundColor3 = Color3.new(204/255, 255/255, 204/255)
         Button.Text = "Spam: ON"
+        LocalPlayer.Character.Humanoid.WalkSpeed = 35
         spamCoroutine = coroutine.create(spamRob)
         coroutine.resume(spamCoroutine)
     else
         Button.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
         Button.Text = "Spam: OFF"
+        LocalPlayer.Character.Humanoid.WalkSpeed = 20
         spamCoroutine = nil
     end
 end
@@ -53,24 +54,4 @@ end)
 
 Button.MouseButton1Click:Connect(toggleSpam)
 
-local function setupRespawnHandling()
-    isSpamming = false
-    if spamCoroutine then
-        spamCoroutine = nil
-    end
-    Button.BackgroundColor3 = Color3.new(255/255, 204/255, 204/255)
-    Button.Text = "Spam: OFF"
-
-    local character = Player.Character or Player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        humanoid.WalkSpeed = 35
-    end
-end
-
-
-
-Player.CharacterAdded:Connect(setupRespawnHandling)
-setupRespawnHandling()
-
--- hopefully i was able to get a fix out
+-- <>____<>

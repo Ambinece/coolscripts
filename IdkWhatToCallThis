@@ -1,0 +1,63 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+local hitbox = Instance.new("Part")
+hitbox.Size = Vector3.new(25, 75, 25)
+hitbox.Anchored = true
+hitbox.CanCollide = false
+hitbox.Transparency = 0.5
+hitbox.Parent = Character
+hitbox.CastShadow = false
+hitbox.Name = "Hitbox"
+
+local function attackTargetsInHitbox()
+    local livingFolder = game.Workspace:FindFirstChild("Living")
+    if livingFolder then
+        for _, group in pairs(livingFolder:GetChildren()) do
+            if group ~= Character then  -- Exclude the local player's character
+                local targetHRP = group:FindFirstChild("HumanoidRootPart")
+                if targetHRP then
+                    local args = {
+                        [1] = targetHRP.CFrame,
+                        [2] = 150,
+                        [3] = 5,
+                        [4] = 5,
+                        [5] = 35,
+                        [6] = ReplicatedStorage.gaster.Saw,
+                        [7] = 410625063,
+                        [8] = 1,
+                        [9] = 2,
+                        [10] = targetHRP,
+                        [11] = 2
+                    }
+
+                    local remote = ReplicatedStorage:WaitForChild("newremotes"):FindFirstChild("CreateProjectile")
+                    if remote then
+                        remote:FireServer(unpack(args))
+                    end
+                end
+            end
+        end
+    else
+        warn("Living folder not found in workspace.")
+    end
+end
+
+local function updateHitboxPosition()
+    hitbox.CFrame = HumanoidRootPart.CFrame
+end
+
+local function checkAndAttack()
+    while true do
+        updateHitboxPosition()
+        attackTargetsInHitbox()
+        wait()  -- Continuously loop without a delay
+    end
+end
+
+RunService.Heartbeat:Connect(checkAndAttack)

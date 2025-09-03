@@ -1,101 +1,58 @@
--- Require the C00lLib UI library
+-- Animation replacement dictionary
+local DEFAULT_TO_REPLACEMENT = {
+	["136252471123500"] = "rbxassetid://89252407304675", -- Run
+	["131082534135875"] = "rbxassetid://138754221537146", -- Idle
+	["108018357044094"] = "rbxassetid://131235528875091", -- Walk
+}
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local animator = character:WaitForChild("Humanoid"):WaitForChild("Animator")
+
+local conn
+
+-- Function to clean IDs so they always match the dictionary
+local function normalizeId(id)
+	-- Strip everything except the number
+	local num = string.match(id, "%d+")
+	return num or id
+end
+
+local function startOverride()
+	if conn then return end
+	conn = animator.AnimationPlayed:Connect(function(track)
+		local cleanId = normalizeId(track.Animation.AnimationId)
+		local replacement = DEFAULT_TO_REPLACEMENT[cleanId]
+		if replacement then
+			-- Stop the default track
+			track:Stop()
+			-- Load and play the replacement
+			local newAnim = Instance.new("Animation")
+			newAnim.AnimationId = replacement
+			local newTrack = animator:LoadAnimation(newAnim)
+			newTrack:Play()
+		end
+	end)
+end
+
+local function stopOverride()
+	if conn then
+		conn:Disconnect()
+		conn = nil
+	end
+end
+
+-- Example UI binding (C00lLib)
 local HttpService = game:GetService("HttpService")
 local raw = game:HttpGetAsync("https://raw.githubusercontent.com/Ambinece/C00lHub/refs/heads/main/C00lLib")
 local MainLibrary = loadstring(raw)()
 
--- Create the UI
-local UI = MainLibrary:CreateUI("Animation Override")
+local UI = MainLibrary:CreateUI("Anim Override")
 
--- Animation override mapping
-local DEFAULT_TO_REPLACEMENT = {
-    ["rbxassetid://136252471123500"] = "rbxassetid://89252407304675",   -- Run → BetterRun
-    ["rbxassetid://131082534135875"] = "rbxassetid://138754221537146", -- Idle → BetterIdle
-    ["rbxassetid://108018357044094"] = "rbxassetid://131235528875091", -- Walk → BetterWalk
-}
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local player = Players.LocalPlayer
-
-local conns = {}
-local playing = {}
-local isRunning = false
-
-local function isTargetId(id)
-    return DEFAULT_TO_REPLACEMENT[id] ~= nil
-end
-
-local function stopTrackIfTarget(track)
-    local anim = track.Animation
-    local id = anim and anim.AnimationId
-    if id and isTargetId(id) then
-        track:Stop(0)
-        return true
-    end
-    return false
-end
-
-local function ensureReplacement(animator, oldId)
-    local desiredId = DEFAULT_TO_REPLACEMENT[oldId]
-    if not desiredId then return end
-
-    local current = playing[oldId]
-    if current and current.IsPlaying then return end
-
-    local anim = Instance.new("Animation")
-    anim.AnimationId = desiredId
-    local track = animator:LoadAnimation(anim)
-    pcall(function() track.Priority = Enum.AnimationPriority.Action4 end)
-    track.Looped = true
-    track:Play(0)
-    playing[oldId] = track
-end
-
-local function startOverride()
-    if isRunning then return end
-    isRunning = true
-
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
-    local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid)
-
-    conns.animPlayed = animator.AnimationPlayed:Connect(function(track)
-        local id = track.Animation and track.Animation.AnimationId
-        if id and isTargetId(id) then
-            stopTrackIfTarget(track)
-            ensureReplacement(animator, id)
-        end
-    end)
-
-    conns.heartbeat = RunService.Heartbeat:Connect(function()
-        for _, t in ipairs(animator:GetPlayingAnimationTracks()) do
-            local id = t.Animation and t.Animation.AnimationId
-            if id and isTargetId(id) then
-                stopTrackIfTarget(t)
-                ensureReplacement(animator, id)
-            end
-        end
-    end)
-
-    print("[AnimOverride] Started.")
-end
-
-local function stopOverride()
-    if not isRunning then return end
-    isRunning = false
-
-    for _, c in pairs(conns) do pcall(function() c:Disconnect() end) end
-    conns = {}
-    for _, tr in pairs(playing) do pcall(function() tr:Stop(0) end) end
-    playing = {}
-    print("[AnimOverride] Stopped.")
-end
-
--- Create a toggle button using the UI lib
-UI:CreateToggle("Override Animations", function(state)
-    if state then
-        startOverride()
-    else
-        stopOverride()
-    end
+UI:CreateToggle("Toggle Anim Override", function(state)
+	if state then
+		startOverride()
+	else
+		stopOverride()
+	end
 end)

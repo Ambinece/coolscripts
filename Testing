@@ -1,3 +1,40 @@
+-- BEGIN OVERRIDE
+local old_loadstring = loadstring
+loadstring = function(src)
+    if type(src) == "string" then
+        -- Try writefile (if executor supports it)
+        pcall(function()
+            if type(writefile) == "function" then
+                writefile("Extracted.lua", src)
+            end
+        end)
+
+        -- Print first few hundred chars so you know it worked
+        print("Captured payload, length:", #src)
+        print(src:sub(1, 500))
+
+        -- Store in ReplicatedStorage as StringValues (works in Studio)
+        pcall(function()
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            local folder = Instance.new("Folder")
+            folder.Name = "__ExtractedPayload"
+            folder.Parent = ReplicatedStorage
+            local N = math.ceil(#src / 50000)
+            for i = 1, N do
+                local part = Instance.new("StringValue")
+                part.Name = "Part_"..i
+                part.Value = src:sub((i-1)*50000+1, i*50000)
+                part.Parent = folder
+            end
+        end)
+    end
+
+    -- Return a dummy function so script doesn't crash
+    return function() end
+end
+-- END OVERRIDE
+
+
 --[[ v1.0.0 https://wearedevs.net/obfuscator ]] 
 -- BEGIN AUTO INSERT: capture large table.concat outputs (for deobfuscation)
 do
